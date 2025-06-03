@@ -126,7 +126,10 @@ public class Main {
         }else{
             C2C = C2C * 2 - 2;
         }
-        while (grid[C1R][C1C] != "_" || grid[C2R][C2C] != "_"){
+        while (grid[C1R][C1C] != "_" || grid[C2R][C2C] != "_"
+                || (C1R == C2R && C1C == C2C)
+                || C1R > 6 || C2R > 6 || C2C > 6 || C1C > 6
+                || C1R < 0 || C2R < 0 || C2C < 0 || C1C < 0 ){
             System.out.println("ERROR, try again");
             System.out.print("Enter first position: ");
             check1 = scanner.nextLine();
