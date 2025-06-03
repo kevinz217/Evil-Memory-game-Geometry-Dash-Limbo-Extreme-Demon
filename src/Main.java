@@ -9,10 +9,8 @@ public class Main {
         System.out.println("Welcome players to a simple matching game!");
 
         int turn = 0;
-        int total = 0;
-        int p1score = 0;
-        int p2score = 0;
-
+        person p1 = new person();
+        person p2 = new person();
         String antidote = "\uD83D\uDC8A";
         String poison = "\uD83D\uDC80";
         String knight = "\uD83D\uDEE1";
@@ -21,6 +19,7 @@ public class Main {
         String bomb = "\uD83D\uDCA3";
         String shuffle = "\uD83C\uDCCF";
         String wildcard = "\uD83E\uDD8B";
+        String[] unique = {"\uD83D\uDC8A","\uD83D\uDC80","\uD83D\uDEE1","\uD83D\uDDE1","\uD83E\uDEA4","\uD83D\uDCA3","\uD83C\uDCCF","\uD83E\uDD8B"};
         String[] a = {"\uD83D\uDD20", "\uD83D\uDD23", "\uD83D\uDD22", "\uD83D\uDD24", "\uD83C\uDD70", "\uD83C\uDD8E", "\uD83C\uDD71", "\uD83C\uDD91", "\uD83C\uDD92", "\uD83C\uDD93", "\uD83C\uDD94", "\uD83C\uDD95", "\uD83C\uDD96", "\uD83C\uDD7E"};
         ArrayList<String> available = new ArrayList<>(Arrays.asList(antidote, poison, knight, robber, mine, bomb, shuffle, wildcard));
         for(int i = 0; i < a.length; i++){
@@ -37,9 +36,6 @@ public class Main {
             System.out.println();
         }
 
-        System.out.println();
-        char lettera = 97;
-
         String[] row7 = {"1"," ","2"," ","3"," ","4"," ","5"," ","6"," "," "};
         String[] row1 = {"_"," ","_"," ","_"," ","_"," ","_"," ","_"," ","a"};
         String[] row2 = {"_"," ","_"," ","_"," ","_"," ","_"," ","_"," ","b"};
@@ -48,24 +44,26 @@ public class Main {
         String[] row5 = {"_"," ","_"," ","_"," ","_"," ","_"," ","_"," ","e"};
         String[] row6 = {"_"," ","_"," ","_"," ","_"," ","_"," ","_"," ","f"};
         String[][] grid ={row1, row2, row3, row4, row5, row6, row7};
-        while (total < 14) {
+        while (p1.getScore() + p2.getScore() < 14) {
             if (turn % 2 == 0) {
                 System.out.println("p1 turn");
-                boolean scored = play(grid, answer);
-                if (scored) {
-                    total++;
-                    p1score++;
-                }
+                System.out.println("Score: " + p1.getScore());
+                p1 = play(grid, answer, unique, p1);
+                turn ++;
             } else {
                 System.out.println("p2 turn");
-                boolean scored = play(grid, answer);
-                if (scored) {
-                    total++;
-                    p2score++;
-                }
+                System.out.println("Score: " + p2.getScore());
+                p2 = play(grid, answer, unique, p2);
+                turn ++;
             }
         }
-
+        if (p1.getScore() > p2.getScore()){
+            System.out.println("P1 WINS OMGG");
+        }else if (p1.getScore() < p2.getScore()){
+            System.out.println("P2 WINS OMGG");
+        }else{
+            System.out.println("TIE OMGGGGG");
+        }
     }
     public static void makeGrid(String[][] grid){
         for(int i = 0; i < grid.length; i++){
@@ -98,7 +96,7 @@ public class Main {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
-    public static boolean play(String[][] grid, String[][] answer){
+    public static person play(String[][] grid, String[][] answer, String[] specItems, person p){
         makeGrid(grid);
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter first position: ");
@@ -158,14 +156,49 @@ public class Main {
         }else{
             grid[C2R][C2C] = answer[A2R][A2C - 1];
         }
-
         makeGrid(grid);
+        ArrayList<String> SIAL = new ArrayList<>(Arrays.asList(specItems));
+
+        if (SIAL.contains(grid[C1R][C1C])){
+            check(grid[C1R][C1C], p);
+        }
+        if (SIAL.contains(grid[C2R][C2C])){
+            check(grid[C2R][C2C], p);
+        }
         if (grid[C1R][C1C] != grid[C2R][C2C]){
             grid[C1R][C1C] = "_";
             grid[C2R][C2C] = "_";
-            return false;
+            return p;
         }
-        makeGrid(grid);
-        return true;
+        p.addScore();
+        return p;
+    }
+    public static person check(String spec, person p){
+        String antidote = "\uD83D\uDC8A";
+        String poison = "\uD83D\uDC80";
+        String knight = "\uD83D\uDEE1";
+        String robber = "\uD83D\uDDE1";
+        String mine = "\uD83E\uDEA4";
+        String bomb = "\uD83D\uDCA3";
+        String shuffle = "\uD83C\uDCCF";
+        String wildcard = "\uD83E\uDD8B";
+        if (spec == antidote){
+            p.addInv(antidote);
+        }else if (spec == knight){
+            p.addInv(knight);
+        }else if (spec == wildcard){
+            p.addInv(antidote);
+            p.addInv(knight);
+        }
+        if (spec == poison && p.getInv().contains(antidote)){
+            p.removeInv(antidote);
+        }
+        if (spec == robber && p.getInv().contains(knight)){
+            p.removeInv(knight);
+        }
+        if (spec == bomb || spec == mine || spec == shuffle){
+            p.removeScore();
+        }
+        return p;
     }
 }
