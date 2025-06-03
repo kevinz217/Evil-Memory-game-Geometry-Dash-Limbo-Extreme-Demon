@@ -44,7 +44,7 @@ public class Main {
         String[] row5 = {"_"," ","_"," ","_"," ","_"," ","_"," ","_"," ","e"};
         String[] row6 = {"_"," ","_"," ","_"," ","_"," ","_"," ","_"," ","f"};
         String[][] grid ={row1, row2, row3, row4, row5, row6, row7};
-        while (p1.getScore() + p2.getScore() < 14) {
+        while (p1.getMatches() + p2.getMatches() < 14) {
             if (turn % 2 == 0) {
                 System.out.println("p1 turn");
                 System.out.println("Score: " + p1.getScore());
@@ -85,18 +85,23 @@ public class Main {
         }
         return answer;
     }
+
     //fix clear
     public static void clear(){
         Timer t = new Timer();
         try{
-            Thread.sleep(300);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             System.out.println(e);
+        }
+        for (int i = 0; i <= 30; i++) {
+            System.out.println();
         }
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
-    public static person play(String[][] grid, String[][] answer, String[] specItems, person p){
+
+        public static person play(String[][] grid, String[][] answer, String[] specItems, person p){
         makeGrid(grid);
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter first position: ");
@@ -165,12 +170,14 @@ public class Main {
         if (SIAL.contains(grid[C2R][C2C])){
             check(grid[C2R][C2C], p);
         }
+        clear();
         if (grid[C1R][C1C] != grid[C2R][C2C]){
             grid[C1R][C1C] = "_";
             grid[C2R][C2C] = "_";
             return p;
         }
         p.addScore();
+        p.addMatches();
         return p;
     }
     public static person check(String spec, person p){

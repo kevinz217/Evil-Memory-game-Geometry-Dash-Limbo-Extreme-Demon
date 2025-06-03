@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class person {
     int score = 0;
+    int matches = 0;
     ArrayList<String> inv = new ArrayList<>();
     public void Person() {}
 
@@ -11,6 +12,13 @@ public class person {
 
     public void addScore() {
         this.score ++;
+    }
+    public int getMatches() {
+        return matches;
+    }
+
+    public void addMatches() {
+        this.matches ++;
     }
     public void removeScore(){
         this.score --;
